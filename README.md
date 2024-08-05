@@ -14,10 +14,10 @@ This project utilizes computer vision techniques to track hand movements and con
 1. Clone the repository
 
 2. Navigate to the project directory:
-'''cd HandTracking-Mouse'''
+`cd HandTracking-Mouse`
 
 3. Install the required packages:
-'''pip install opencv-python mediapipe autopy'''
+`pip install opencv-python mediapipe autopy`
 
 
 ## Running the Project
