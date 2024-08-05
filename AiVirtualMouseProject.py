@@ -31,10 +31,10 @@ while True:
     img = detector.findHands(img)
     lmList, bbox = detector.findPosition(img)
     
-    # 2. Get the tip of the index and middle fingers
+    # 2. Get the tip of the index finger and thumb
     if len(lmList) != 0:
-        x1, y1 = lmList[8][1:]
-        x2, y2 = lmList[12][1:]
+        x1, y1 = lmList[8][1:]  # Index finger tip
+        x2, y2 = lmList[4][1:]  # Thumb tip
         # print(x1, y1, x2, y2)
     
     # 3. Check which fingers are up
@@ -50,28 +50,33 @@ while True:
         # 6. Smoothen Values
         clocX = plocX + (x3 - plocX) / smoothening
         clocY = plocY + (y3 - plocY) / smoothening
+
+        # 7. Ensure coordinates are within screen bounds
+        clocX = max(0, min(wScr, clocX))
+        clocY = max(0, min(hScr, clocY))
     
-        # 7. Move Mouse
+        # 8. Move Mouse
         autopy.mouse.move(wScr - clocX, clocY)
         cv2.circle(img, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
         plocX, plocY = clocX, clocY
         
-    # 8. Both Index and middle fingers are up : Clicking Mode
-    if len(fingers) >= 2 and fingers[1] == 1 and fingers[2] == 1:
-        # 9. Find distance between fingers
-        length, img, lineInfo = detector.findDistance(8, 12, img)
+    # 9. Index finger and thumb are up : Clicking Mode
+    if len(fingers) >= 2 and fingers[1] == 1 and fingers[0] == 1:
+        # 10. Find distance between index finger and thumb
+        length, img, lineInfo = detector.findDistance(8, 4, img)
         # print(length)
-        # 10. Click mouse if distance short
+        # 11. Click mouse if distance short
         if length < 40:
             cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, (0, 255, 0), cv2.FILLED)
             autopy.mouse.click()
     
-    # 11. Frame rate
+    # 12. Frame rate
     cTime = time.time()
     fps = 1 / (cTime - pTime)
     pTime = cTime
     cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
     
-    # 12. Display
+    # 13. Display
     cv2.imshow("Image", img)
     cv2.waitKey(1)
+   
